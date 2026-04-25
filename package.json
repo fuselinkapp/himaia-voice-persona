@@ -1,0 +1,43 @@
+{
+  "name": "voice-persona",
+  "version": "0.2.0",
+  "description": "Reference parser, validator, and types for the voice.persona spec — Apache-2.0.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "SPEC.md",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "node --test test/*.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm build && pnpm test"
+  },
+  "dependencies": {
+    "yaml": "^2.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "@types/node": "^22.7.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/maia-voice/voice-persona",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maia-voice/voice-persona.git"
+  }
+}
