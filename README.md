@@ -161,3 +161,5 @@ Apache-2.0. See `LICENSE`. The spec, the reference implementation, and the
 example starters are all Apache-2.0. Any persona file you author is yours;
 the example starters carry CC-BY-4.0 attribution per `author` / `license`
 fields in each file.
+
+Made by [himaia](https://himaia.dev) · © Fuse Link Inc.
