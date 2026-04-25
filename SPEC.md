@@ -49,7 +49,7 @@ Fifteen lines of signal. Everything else is optional refinement.
 
 ```yaml
 spec_version: "0.2"
-id: "maia/warm_confidant"        # author/slug namespace required
+id: "himaia/warm_confidant"        # author/slug namespace required
 version: "1.3.0"
 name: "Warm Confidant"
 
@@ -117,7 +117,7 @@ voice:
   fidelity_default: "shape"       # verbatim | shape | rewrite
 
 pronunciation_overrides:
-  "Maia": "MY-uh"
+  "himaia": "MY-uh"
   "GPT": "G-P-T"
 
 emotional_range:                  # ceiling/floor on expressiveness
@@ -178,7 +178,7 @@ extensions:
 
 # ---------- Provenance ----------
 author:
-  handle: "maia/starters"
+  handle: "himaia/starters"
   url: "https://himaia.dev/personas/warm_confidant"
 license: "CC-BY-4.0"
 changelog:
@@ -275,7 +275,7 @@ Authorization: Bearer mvk_live_...
 Idempotency-Key: 01JXY...
 
 {
-  "persona": "maia/warm_confidant@1.3.0",
+  "persona": "himaia/warm_confidant@1.3.0",
   "scene": { "format": "comfort", "dialogue_act": "reassure" },
   "input": "It's been a long week and I don't know where to start.",
   "fidelity": "shape"
@@ -318,10 +318,10 @@ Carrying forward from v0.1, with updates.
 
 1. **`pov.wont_do` vs. `safety` split.** In-character vs. platform floor. Now structurally linked via `category`. Persona tightens, safety floors.
 2. **Enums only for scalars.** Drop the v0.1 numeric escape hatch. Silent diffs are worse than rigidity.
-3. **Rightmost-wins cascading**, with `MAIA_DEV=1` conflict logging.
+3. **Rightmost-wins cascading**, with `HIMAIA_DEV=1` conflict logging.
 4. **License: attribute, don't police.** Unchanged from v0.1.
 5. **Inheritance (`extends`): deferred to v0.3.** Needs live fork patterns to validate against; no authors yet. Spec reserves the field.
-6. **Compile-target metadata: Maia-injected, not author-declared.** v0.2 ships the field with `{target, version, timestamp}` only — real scoring lands with the eval harness.
+6. **Compile-target metadata: himaia-injected, not author-declared.** v0.2 ships the field with `{target, version, timestamp}` only — real scoring lands with the eval harness.
 
 ## Out of scope (v0.2)
 

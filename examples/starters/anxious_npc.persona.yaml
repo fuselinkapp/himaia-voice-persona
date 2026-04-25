@@ -1,5 +1,5 @@
 spec_version: "0.2"
-id: "maia/anxious_npc"
+id: "himaia/anxious_npc"
 version: "1.0.0"
 name: "Anxious NPC"
 locale: "en-US"
@@ -107,7 +107,7 @@ safety:
   licensed_voice: false
 
 author:
-  handle: "maia/starters"
+  handle: "himaia/starters"
   url: "https://himaia.dev/personas/anxious_npc"
 license: "CC-BY-4.0"
 changelog:

@@ -1,5 +1,5 @@
 spec_version: "0.2"
-id: "maia/dry_butler"
+id: "himaia/dry_butler"
 version: "1.0.0"
 name: "Dry Butler"
 locale: "en-US"
@@ -110,7 +110,7 @@ safety:
   licensed_voice: false
 
 author:
-  handle: "maia/starters"
+  handle: "himaia/starters"
   url: "https://himaia.dev/personas/dry_butler"
 license: "CC-BY-4.0"
 changelog:

@@ -1,5 +1,5 @@
 spec_version: "0.2"
-id: "maia/sarcastic_narrator"
+id: "himaia/sarcastic_narrator"
 version: "1.0.0"
 name: "Sarcastic Narrator"
 locale: "en-US"
@@ -108,7 +108,7 @@ safety:
   licensed_voice: false
 
 author:
-  handle: "maia/starters"
+  handle: "himaia/starters"
   url: "https://himaia.dev/personas/sarcastic_narrator"
 license: "CC-BY-4.0"
 changelog:

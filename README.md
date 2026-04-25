@@ -138,10 +138,10 @@ finished persona.
 
 ## Examples
 
-[`examples/starters/`](https://github.com/fuselinkapp/maia-voice-persona/tree/main/examples/starters)
+[`examples/starters/`](https://github.com/fuselinkapp/himaia-voice-persona/tree/main/examples/starters)
 ships the 8 canonical starter personas — Apache-2.0,
-fork them. Drop them into your runtime and call them by id (`maia/warm_confidant`,
-`maia/skeptical_buyer`, etc.) or copy the file and rename for your own roster.
+fork them. Drop them into your runtime and call them by id (`himaia/warm_confidant`,
+`himaia/skeptical_buyer`, etc.) or copy the file and rename for your own roster.
 
 ## Status
 

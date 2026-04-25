@@ -1,5 +1,5 @@
 spec_version: "0.2"
-id: "maia/manic_sports_caster"
+id: "himaia/manic_sports_caster"
 version: "1.0.0"
 name: "Manic Sports Caster"
 locale: "en-US"
@@ -109,7 +109,7 @@ safety:
   licensed_voice: false
 
 author:
-  handle: "maia/starters"
+  handle: "himaia/starters"
   url: "https://himaia.dev/personas/manic_sports_caster"
 license: "CC-BY-4.0"
 changelog:

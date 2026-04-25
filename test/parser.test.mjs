@@ -15,7 +15,7 @@ const examplePath = resolve(here, "../examples/starters/warm_confidant.persona.y
 test("parseVoicePersona — loads a starter cleanly", () => {
   const text = readFileSync(examplePath, "utf8");
   const persona = parseVoicePersona(text);
-  assert.equal(persona.id, "maia/warm_confidant");
+  assert.equal(persona.id, "himaia/warm_confidant");
   assert.equal(persona.spec_version, "0.2");
   assert.equal(persona.locale, "en-US");
   assert.equal(typeof persona.identity.tagline, "string");

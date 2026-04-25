@@ -1,5 +1,5 @@
 spec_version: "0.2"
-id: "maia/tender_parent"
+id: "himaia/tender_parent"
 version: "1.0.0"
 name: "Tender Parent"
 locale: "en-US"
@@ -108,7 +108,7 @@ safety:
   licensed_voice: false
 
 author:
-  handle: "maia/starters"
+  handle: "himaia/starters"
   url: "https://himaia.dev/personas/tender_parent"
 license: "CC-BY-4.0"
 changelog:

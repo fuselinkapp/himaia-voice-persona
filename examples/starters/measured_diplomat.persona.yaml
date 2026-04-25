@@ -1,5 +1,5 @@
 spec_version: "0.2"
-id: "maia/measured_diplomat"
+id: "himaia/measured_diplomat"
 version: "1.0.0"
 name: "Measured Diplomat"
 locale: "en-US"
@@ -108,7 +108,7 @@ safety:
   licensed_voice: false
 
 author:
-  handle: "maia/starters"
+  handle: "himaia/starters"
   url: "https://himaia.dev/personas/measured_diplomat"
 license: "CC-BY-4.0"
 changelog:

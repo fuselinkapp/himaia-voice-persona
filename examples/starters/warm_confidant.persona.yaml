@@ -1,5 +1,5 @@
 spec_version: "0.2"
-id: "maia/warm_confidant"
+id: "himaia/warm_confidant"
 version: "1.0.0"
 name: "Warm Confidant"
 locale: "en-US"
@@ -104,7 +104,7 @@ safety:
   licensed_voice: false
 
 author:
-  handle: "maia/starters"
+  handle: "himaia/starters"
   url: "https://himaia.dev/personas/warm_confidant"
 license: "CC-BY-4.0"
 changelog:
