@@ -9,6 +9,9 @@ export {
   validateVoicePersona,
 } from "./validator.js";
 
+export { ImporterError, importTavernCard } from "./importers/tavern.js";
+export type { ImportResult } from "./importers/tavern.js";
+
 export type {
   VoicePersona,
   Identity,

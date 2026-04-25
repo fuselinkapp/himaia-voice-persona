@@ -28,6 +28,12 @@ First public release of the spec and the reference parser.
   skeptical_buyer, sarcastic_narrator, anxious_npc, measured_diplomat,
   tender_parent, dry_butler, manic_sports_caster.
 
+### Importers
+- `importTavernCard(input)` — Tavern Card v2 (CCv2) → voice.persona,
+  structural mapping only (no LLM). Returns `{ persona, warnings }` so
+  the lossy fields (idiolect, voice, scenes) are visible to the operator.
+  See README "Importing from Tavern Card v2" for the mapping table.
+
 ### Known gaps (planned for v0.3)
 
 - Full operator algebra on scenes (`$prepend`, `$replace`, `$remove`,
@@ -35,8 +41,9 @@ First public release of the spec and the reference parser.
 - Overridable-field whitelist enforcement.
 - `wont_do` ↔ `safety` category cross-check.
 - Inheritance (`extends`).
-- Lorebook (`context_hooks`).
-- A CCv2 → voice.persona importer (in active development).
+- Lorebook (`context_hooks`) — and CCv2 importer round-trip preservation
+  of `character_book`.
+- CCv3 importer.
 
 ### Versioning policy
 

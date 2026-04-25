@@ -89,6 +89,53 @@ import { validateVoicePersona } from "voice-persona";
 validateVoicePersona(alreadyParsedObject); // throws on bad shape
 ```
 
+## Importing from Tavern Card v2
+
+`voice.persona` ships a CCv2 importer for the chub.ai / SillyTavern character
+card format. The mapping is **lossy by design** — CCv2 carries a character
+as free-form prose; v0.2 expects structured idiolect, voice, and scene
+fields. The importer fills what it can and surfaces what it can't via a
+`warnings` array. No LLM. No prosody guessing.
+
+```ts
+import { importTavernCard } from "voice-persona";
+import { readFileSync } from "node:fs";
+import { stringify as yamlStringify } from "yaml";
+
+const card = JSON.parse(readFileSync("seraphina.card.json", "utf8"));
+const { persona, warnings } = importTavernCard(card);
+
+console.log(yamlStringify(persona));        // ready to commit
+console.warn(warnings.join("\n"));          // what to review
+```
+
+### Mapping
+
+| CCv2 field                    | voice.persona target                              |
+|-------------------------------|---------------------------------------------------|
+| `data.name`                   | `name`, slug → `id` as `imported/<slug>`          |
+| `data.description`            | `identity.description`                            |
+| `data.personality`            | `identity.tagline` (first sentence, ≤100 chars)   |
+| `data.first_mes`              | `greetings[0]`                                    |
+| `data.alternate_greetings[]`  | `greetings[1..]`                                  |
+| `data.mes_example`            | `examples[]` (one per `<START>` block)            |
+| `data.creator`                | `author.handle`                                   |
+| `data.character_version`      | `version` (default `1.0.0`)                       |
+| `data.creator_notes`          | `extensions["chub.ai/creator_notes"]`             |
+| `data.tags[]`                 | `extensions["chub.ai/tags"]`                      |
+| `data.extensions.*`           | `extensions["chub.ai/*"]` (preserved verbatim)    |
+| `data.scenario`               | dropped (per-chat, not per-character)             |
+| `data.system_prompt`          | dropped (runtime concern)                         |
+| `data.post_history_instructions` | dropped (runtime concern)                      |
+| `data.character_book`         | dropped (lorebook — preserved when v0.3 lands)    |
+
+Defaults applied when the card doesn't carry the field: `locale: "en-US"`,
+`safety.age_gate: "13+"`, `license: "NOASSERTION"` (SPDX standard for
+"unknown provenance"), no `voice`, no `idiolect`, no `scenes`. The importer
+**always** warns "idiolect, voice, scenes are empty — fill them in or this
+persona will sound generic." Treat the imported file as a first draft, not a
+finished persona.
+
 ## Examples
 
 [`examples/starters/`](https://github.com/maia-voice/voice-persona/tree/main/examples/starters)
