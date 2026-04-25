@@ -35,9 +35,9 @@
   "publishConfig": {
     "access": "public"
   },
-  "homepage": "https://github.com/maia-voice/voice-persona",
+  "homepage": "https://github.com/fuselinkapp/maia-voice-persona",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maia-voice/voice-persona.git"
+    "url": "git+https://github.com/fuselinkapp/maia-voice-persona.git"
   }
 }

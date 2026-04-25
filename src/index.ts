@@ -1,5 +1,5 @@
 // voice.persona — reference parser, validator, and types for the v0.2 spec.
-// Apache-2.0. https://github.com/maia-voice/voice-persona
+// Apache-2.0. https://github.com/fuselinkapp/maia-voice-persona
 
 export { parseVoicePersona } from "./parser.js";
 export type { ParseFormat, ParseOptions } from "./parser.js";
