@@ -108,7 +108,7 @@ safety:
 
 author:
   handle: "maia/starters"
-  url: "https://maia.sh/personas/anxious_npc"
+  url: "https://himaia.dev/personas/anxious_npc"
 license: "CC-BY-4.0"
 changelog:
   - version: "1.0.0"

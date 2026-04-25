@@ -109,7 +109,7 @@ safety:
 
 author:
   handle: "maia/starters"
-  url: "https://maia.sh/personas/sarcastic_narrator"
+  url: "https://himaia.dev/personas/sarcastic_narrator"
 license: "CC-BY-4.0"
 changelog:
   - version: "1.0.0"

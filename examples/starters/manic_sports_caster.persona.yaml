@@ -110,7 +110,7 @@ safety:
 
 author:
   handle: "maia/starters"
-  url: "https://maia.sh/personas/manic_sports_caster"
+  url: "https://himaia.dev/personas/manic_sports_caster"
 license: "CC-BY-4.0"
 changelog:
   - version: "1.0.0"

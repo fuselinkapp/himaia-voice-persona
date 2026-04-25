@@ -179,7 +179,7 @@ extensions:
 # ---------- Provenance ----------
 author:
   handle: "maia/starters"
-  url: "https://maia.sh/personas/warm_confidant"
+  url: "https://himaia.dev/personas/warm_confidant"
 license: "CC-BY-4.0"
 changelog:
   - version: "1.3.0"

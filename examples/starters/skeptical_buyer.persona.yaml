@@ -109,7 +109,7 @@ safety:
 
 author:
   handle: "maia/starters"
-  url: "https://maia.sh/personas/skeptical_buyer"
+  url: "https://himaia.dev/personas/skeptical_buyer"
 license: "CC-BY-4.0"
 changelog:
   - version: "1.0.0"

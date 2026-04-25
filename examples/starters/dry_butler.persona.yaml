@@ -111,7 +111,7 @@ safety:
 
 author:
   handle: "maia/starters"
-  url: "https://maia.sh/personas/dry_butler"
+  url: "https://himaia.dev/personas/dry_butler"
 license: "CC-BY-4.0"
 changelog:
   - version: "1.0.0"

@@ -109,7 +109,7 @@ safety:
 
 author:
   handle: "maia/starters"
-  url: "https://maia.sh/personas/measured_diplomat"
+  url: "https://himaia.dev/personas/measured_diplomat"
 license: "CC-BY-4.0"
 changelog:
   - version: "1.0.0"
