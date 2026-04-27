@@ -1,5 +1,5 @@
 // voice.persona spec v0.2 — TypeScript types for the subset we enforce at load
-// time. The published reference schema (github.com/maia/voice-persona, bet1.10)
+// time. The published reference schema (github.com/fuselinkapp/himaia-voice-persona, bet1.10)
 // will be the authoritative version; these types track what the runtime needs.
 
 export type Scalar5 = "none" | "low" | "mid" | "high" | "max";

@@ -335,7 +335,7 @@ Carrying forward from v0.1, with updates.
 
 ## Next steps
 
-- [ ] Publish reference implementation (parser + validator) at `github.com/maia/voice-persona`.
+- [ ] Publish reference implementation (parser + validator) at `github.com/fuselinkapp/himaia-voice-persona`.
 - [ ] Publish `chara_card_v2 → voice.persona` importer.
 - [ ] Ship 8 starter personas under `personas/starters/*.persona.yaml`.
 - [ ] Ratify with 3 external authors (1 SillyTavern plugin author, 2 companion-app devs) before declaring v0.2 frozen.
