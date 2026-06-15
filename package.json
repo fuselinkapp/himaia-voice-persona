@@ -1,7 +1,7 @@
 {
   "name": "voice-persona",
   "version": "0.2.1",
-  "description": "Reference parser, validator, and types for the voice.persona spec \u2014 Apache-2.0.",
+  "description": "Reference parser, validator, and types for the voice.persona spec — Apache-2.0.",
   "author": {
     "name": "Fuse Link Inc.",
     "url": "https://himaia.dev"
@@ -17,7 +17,7 @@
     }
   },
   "bin": {
-    "voice-persona": "./dist/cli.js"
+    "voice-persona": "dist/cli.js"
   },
   "files": [
     "dist",
