@@ -1,4 +1,4 @@
-# `voice.persona` spec — draft v0.2
+# `voice.persona` spec — draft v0.2.1
 
 `voice.persona` is a file format for voices that have a point of view — identity, idiolect, scene modulation, and refusals in one versioned artifact. Commit it to git, pin it like a dependency, compile it onto any supported TTS backend. The spec is Apache 2.0; the runtime is not.
 
@@ -206,6 +206,7 @@ How the character **sounds**. Structured as:
 - `voice.timbre` — abstract requirements (`warmth`, `pitch`, `texture`). The compiler picks a concrete backend voice matching these.
 - `voice.prosody` — style-token-mappable dials (`rate`, `pitch_range`, `energy`, `arousal`, `valence`). Compiles to SSML `<prosody>` today; to style tokens tomorrow.
 - `voice.preferred_id` — hint only. If the backend supports it, used; otherwise compiler substitutes.
+- `voice.delivery_cues` *(v0.2.1)* — optional array of short paralinguistic cues the persona MAY weave into its delivery. Max 12 entries, each <= 24 chars, lowercase-ish free text. Examples: `["sighs", "soft laugh", "long pause", "whispers"]`. The compiler renders these as: `"Delivery cues you may use in [brackets]: <comma-separated list>"`. Authors should keep cues sparse — 3–5 is a tasteful default; 12 is the hard cap, not the target.
 
 Concrete voice IDs never leak into the spec as hard dependencies.
 
@@ -220,6 +221,8 @@ Openers and few-shot turn pairs. Missing from v0.1 and the single biggest "pract
 
 ### `scenes`
 Resolution order: `base → scenes.format[x] → scenes.dialogue_act[y] → request`. **Rightmost wins.** Only a whitelisted set of fields is overridable (see §Overridable fields below) — `identity`, `pov`, `safety`, `voice.timbre`, `voice.preferred_id`, `locale` are NOT overridable per scene, because persona-stays-itself is the point.
+
+Each format and dialogue_act entry may carry an optional `direction` field *(v0.2.1)*: a free-text delivery note up to 200 chars. The compiler renders it as: `"Delivery for this scene: <direction>"`. Use it to give the model a concrete performance note that the structured prosody dials can't express alone.
 
 `dialogue_act` replaces v0.1's `move`. Vocabulary aligned with ISO 24617-2 / Searle (see §Foundations).
 
@@ -246,6 +249,7 @@ Whitelist (overridable in scenes.format / scenes.dialogue_act):
   emotional_range.*
   greetings          (append-only via $append)
   dialogue_act_default   (in scenes.format only)
+  direction          (v0.2.1 — free-text delivery note, <= 200 chars)
 
 Not overridable:
   identity.*, pov.*, safety.*, locale
@@ -312,7 +316,23 @@ The v0.2 spec borrows structure from:
 
 These aren't decoration. They're the reason the spec looks the way it does.
 
-## v0.2 design decisions
+### `extends` (v0.2.1, P2-4)
+
+Optional top-level `extends?: "<author/slug>"` or `"<author/slug>@<semver>"`. Declares that this persona inherits from a named base.
+
+**Semantics:** child deep-merges over the named base; child wins on every conflict. No cycles permitted. The spec package validates the field shape only; cross-file resolution (fetching and merging the base at load time) is the API loader's responsibility. The field name is exactly `extends` so the loader can match without any coordination.
+
+**Example:**
+
+```yaml
+extends: "himaia/warm_confidant@1.0.0"
+id: "you/my_confidant_fork"
+# ...only the fields you want to change:
+idiolect:
+  formality: "high"
+```
+
+## v0.2 / v0.2.1 design decisions
 
 Carrying forward from v0.1, with updates.
 
@@ -320,17 +340,18 @@ Carrying forward from v0.1, with updates.
 2. **Enums only for scalars.** Drop the v0.1 numeric escape hatch. Silent diffs are worse than rigidity.
 3. **Rightmost-wins cascading**, with `HIMAIA_DEV=1` conflict logging.
 4. **License: attribute, don't police.** Unchanged from v0.1.
-5. **Inheritance (`extends`): deferred to v0.3.** Needs live fork patterns to validate against; no authors yet. Spec reserves the field.
+5. **Inheritance (`extends`): field defined in v0.2.1.** Shape validated by the spec package; runtime resolution is the API loader's concern. `extends` is a reserved top-level key.
 6. **Compile-target metadata: himaia-injected, not author-declared.** v0.2 ships the field with `{target, version, timestamp}` only — real scoring lands with the eval harness.
+7. **Expressive direction (v0.2.1).** `voice.delivery_cues` and per-scene `direction` fill the gap between structured prosody dials and free-form performance notes — additive, bounded, optional.
 
-## Out of scope (v0.2)
+## Out of scope (v0.2 / v0.2.1)
 
 - Multi-speaker dialogue. One persona per call.
 - Memory / long-term state. Caller's LLM.
 - Voice cloning / custom voice models.
 - Cross-language persona equivalence. One `locale` per file.
 - Real-time interruption handling. TTS-side concern.
-- Inheritance (`extends`). Reserved; v0.3.
+- Cross-file `extends` resolution. API loader concern; spec validates shape only.
 - Lorebook / `context_hooks`. Reserved; v0.3.
 
 ## Next steps

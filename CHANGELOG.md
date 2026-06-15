@@ -1,5 +1,54 @@
 # Changelog
 
+## 0.2.1 — expressive direction + validator hardening (additive; backward-compatible)
+
+### Spec (v0.2.1)
+
+- **`voice.delivery_cues`** (optional) — persona-level array of short paralinguistic
+  cues (max 12, each <= 24 chars). Compiler renders as:
+  `"Delivery cues you may use in [brackets]: <comma list>"`.
+- **`direction`** (optional, per-scene) — free-text delivery note (<=200 chars)
+  added to both `scenes.format.<x>` and `scenes.dialogue_act.<y>`.
+  Added to the overridable-field whitelist. Compiler renders as:
+  `"Delivery for this scene: <direction>"`.
+- **`extends`** (optional, top-level) — declares inheritance from a named base
+  persona (`"<author/slug>"` or `"<author/slug>@<semver>"`). Shape validated by
+  the spec package; cross-file resolution is the API loader's concern.
+
+### Reference implementation
+
+- **Validator now enforces (P1-2):**
+  - Scene overridable-field whitelist — rejects `identity`, `pov`, `safety`,
+    `locale`, `voice.timbre`, `voice.preferred_id`, `pronunciation_overrides`,
+    `extensions` inside scene entries.
+  - `wont_do` ↔ `safety` category cross-check — if a `wont_do` entry carries
+    a category that maps to a `safety.*` field, that safety field must be set.
+  - Full merge-operator algebra — `$append`, `$prepend`, `$replace`, `$remove`,
+    `$unset` all accepted and validated; unknown `$operator` keys error at
+    parse time.
+- **Validator bounds-checks** `delivery_cues` (max 12 / <=24 chars each) and
+  `direction` (<=200 chars).
+- **`extends` field shape** validated (`^[a-z0-9_-]+/[a-z0-9_-]+(@semver)?$`).
+- **Linter CLI** — new `voice-persona lint <file>` command (bin: `voice-persona`).
+  Parses + validates .persona.yaml / .persona.json, prints path-tagged errors,
+  exits 1 on failure.
+
+### Importers
+
+- **CCv2 importer** — two new structural mappings (no LLM, deterministic):
+  - `data.tags` containing known archetype strings (`companion`, `narrator`,
+    `oracle`, etc.) → `identity.archetype`.
+  - `data.tags` containing `nsfw` / `adult` / `18+` / `sfw` → `safety.age_gate`.
+  - Unmapped tags still land in `extensions["chub.ai/tags"]`.
+- **CCv3 importer** — documented TODO stub in `src/importers/tavern.ts`.
+
+### Starters
+
+- `examples/starters/warm_confidant.persona.yaml` updated with `voice.delivery_cues`
+  and per-scene `direction` as a tasteful authoring reference.
+
+---
+
 ## 0.2.0 — initial public release
 
 First public release of the spec and the reference parser.

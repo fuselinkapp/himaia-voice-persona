@@ -1,6 +1,9 @@
-// voice.persona spec v0.2 — TypeScript types for the subset we enforce at load
-// time. The published reference schema (github.com/fuselinkapp/himaia-voice-persona, bet1.10)
+// voice.persona spec v0.2.1 — TypeScript types for the subset we enforce at load
+// time. The published reference schema (github.com/fuselinkapp/himaia-voice-persona)
 // will be the authoritative version; these types track what the runtime needs.
+//
+// v0.2.1 (additive): voice.delivery_cues, per-scene direction, extends field,
+// and full merge-operator algebra ($append/$prepend/$replace/$remove/$unset).
 
 export type Scalar5 = "none" | "low" | "mid" | "high" | "max";
 export type Fidelity = "verbatim" | "shape" | "rewrite";
@@ -69,6 +72,12 @@ export type Voice = {
   prosody?: Prosody;
   preferred_id?: string;
   fidelity_default?: Fidelity;
+  /** v0.2.1 — short paralinguistic cues the persona MAY weave in.
+   *  Max 12 entries, each <= 24 chars, lowercase-ish free text.
+   *  e.g. ["sighs", "soft laugh", "long pause", "whispers"]
+   *  Rendered by the compiler as: "Delivery cues you may use in [brackets]: <comma list>"
+   */
+  delivery_cues?: string[];
 };
 
 export type SceneExample = {
@@ -83,15 +92,34 @@ export type FormatOverride = {
   dialogue_act_default?: string;
   greetings?: string[];
   fidelity_default?: Fidelity;
+  /** v0.2.1 — free-text delivery note for this scene format. <= 200 chars.
+   *  e.g. "Speak as if you're in a quiet library — hushed but precise."
+   *  Rendered by the compiler as: "Delivery for this scene: <direction>"
+   */
+  direction?: string;
 };
+
+// Merge-operator value shapes used in scene overrides.
+// The full algebra: $append/$prepend/$replace/$remove/$unset.
+export type ArrayMergeOp<T = string> = {
+  $append?: T[];
+  $prepend?: T[];
+  $replace?: T[];
+  $remove?: T[];
+};
+export type ScalarUnsetOp = { $unset: true };
 
 export type DialogueActOverride = {
   prosody?: Prosody;
   idiolect?: Partial<Idiolect> & {
-    signatures?: string[] | { $append?: string[] };
-    banned_phrases?: string[] | { $append?: string[] };
+    signatures?: string[] | ArrayMergeOp;
+    banned_phrases?: string[] | ArrayMergeOp;
   };
   fidelity_default?: Fidelity;
+  /** v0.2.1 — free-text delivery note for this dialogue act. <= 200 chars.
+   *  Rendered by the compiler as: "Delivery for this scene: <direction>"
+   */
+  direction?: string;
 };
 
 export type Scenes = {
@@ -116,6 +144,13 @@ export type VoicePersona = {
   version: string;
   name: string;
   locale: string;
+  /** v0.2.1 (P2-4) — optional inheritance. Value is an id string matching
+   *  ^[a-z0-9_-]+/[a-z0-9_-]+$ (optionally suffixed with @<semver>).
+   *  Semantics: child deep-merges over the named base; child wins on conflict.
+   *  No cycles are permitted. Cross-file resolution is the API loader's concern;
+   *  the spec package validates the field SHAPE only.
+   */
+  extends?: string;
   identity: Identity;
   pov?: Pov;
   idiolect?: Idiolect;

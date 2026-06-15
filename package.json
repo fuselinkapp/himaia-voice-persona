@@ -1,6 +1,6 @@
 {
   "name": "voice-persona",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Reference parser, validator, and types for the voice.persona spec \u2014 Apache-2.0.",
   "author": {
     "name": "Fuse Link Inc.",
@@ -15,6 +15,9 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     }
+  },
+  "bin": {
+    "voice-persona": "./dist/cli.js"
   },
   "files": [
     "dist",

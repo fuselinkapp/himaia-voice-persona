@@ -41,4 +41,7 @@ export type {
   RomanticLevel,
   AgeRegister,
   GenderPresentation,
+  // v0.2.1 additions
+  ArrayMergeOp,
+  ScalarUnsetOp,
 } from "./types.js";

@@ -1,4 +1,5 @@
 import type {
+  AgeGate,
   Author,
   SceneExample,
   VoicePersona,
@@ -10,9 +11,30 @@ import type {
 // scenario) plus a few structured fields (name, greetings, mes_example).
 // v0.2 voice.persona expects a structured shape (identity / pov / idiolect /
 // voice / scenes / safety). The mapping is unavoidably lossy; this importer
-// performs the pieces a deterministic mapping CAN do and surfaces what it
-// dropped or defaulted via a `warnings` array. No LLM, no prose-to-prosody
-// inference — those would require ground truth and are out of scope.
+// performs the pieces a deterministic structural mapping CAN do and surfaces
+// what it dropped or defaulted via a `warnings` array. No LLM, no
+// prose-to-prosody inference — those would require ground truth and are out of
+// scope.
+//
+// Structural mappings (v0.2.1 additions marked *):
+//   data.name          → name, id slug
+//   data.personality   → identity.tagline (first sentence) + identity.description (remainder)
+//   data.description   → identity.description (fallback if no personality)
+//   data.creator       → author.handle
+//   data.character_version → version *
+//   data.tags          → extensions["chub.ai/tags"] + identity.archetype heuristic *
+//   data.first_mes + data.alternate_greetings → greetings
+//   data.mes_example   → examples (first user/char pair per <START> block)
+//   data.creator_notes → extensions["chub.ai/creator_notes"]
+//   data.extensions    → extensions["chub.ai/<key>"]
+//
+// What still lands in warnings[] (cannot be mapped without inference):
+//   idiolect, voice, scenes (no structured source in CCv2 prose)
+//   data.scenario (per-chat state, not per-character)
+//   data.system_prompt, post_history_instructions (runtime concerns)
+//   data.character_book (lorebook — preserved as extension in v0.3)
+//
+// CCv3 importer: TODO stub below.
 //
 // **Warning text is human-readable, not a public contract.** Tests should
 // match on field names (substrings) rather than exact strings.
@@ -53,6 +75,31 @@ type CCv2Wrapper = {
 const TAGLINE_FALLBACK = "Imported character — needs a tagline.";
 const MAX_TAGLINE_CHARS = 100;
 
+// Tags that map structurally to an identity.archetype value.
+// Only unambiguous one-word functional roles are mapped; everything else stays
+// in extensions so no information is silently dropped.
+const TAG_TO_ARCHETYPE: Record<string, string> = {
+  assistant: "assistant",
+  companion: "companion",
+  confidant: "confidant",
+  guide: "guide",
+  mentor: "mentor",
+  narrator: "narrator",
+  oracle: "oracle",
+  teacher: "teacher",
+  trickster: "trickster",
+  villain: "villain",
+};
+
+// Tags that map to safety.age_gate values.
+const TAG_TO_AGE_GATE: Record<string, AgeGate> = {
+  nsfw: "18+",
+  adult: "18+",
+  "18+": "18+",
+  sfw: "13+",
+  "13+": "13+",
+};
+
 export function importTavernCard(input: object | string): ImportResult {
   const wrapper = parseInput(input);
   if (wrapper.spec !== "chara_card_v2") {
@@ -92,10 +139,34 @@ export function importTavernCard(input: object | string): ImportResult {
     handle: strOrUndef(data.creator) || "imported",
   };
 
+  // --- Tag → structural field heuristics (deterministic; no LLM) ---
+  // We scan tags for unambiguous archetype / age-gate signals. Everything else
+  // stays in extensions so no information is silently dropped.
+  let archetypeFromTag: string | undefined;
+  let ageGateFromTag: AgeGate | undefined;
+  const unmappedTags: string[] = [];
+
+  if (Array.isArray(data.tags)) {
+    for (const tag of data.tags) {
+      if (typeof tag !== "string") continue;
+      const normalised = tag.trim().toLowerCase();
+      const archetype = TAG_TO_ARCHETYPE[normalised];
+      const ageGate = TAG_TO_AGE_GATE[normalised];
+      if (archetype && !archetypeFromTag) {
+        archetypeFromTag = archetype;
+      } else if (ageGate && !ageGateFromTag) {
+        ageGateFromTag = ageGate;
+      } else {
+        unmappedTags.push(tag);
+      }
+    }
+  }
+
   const extensions: Record<string, unknown> = {};
   if (data.creator_notes) extensions["chub.ai/creator_notes"] = data.creator_notes;
-  if (Array.isArray(data.tags) && data.tags.length > 0) {
-    extensions["chub.ai/tags"] = data.tags.filter((t) => typeof t === "string");
+  // Only store unmapped tags; the mapped ones are structurally placed above.
+  if (unmappedTags.length > 0) {
+    extensions["chub.ai/tags"] = unmappedTags;
   }
   if (data.extensions && typeof data.extensions === "object") {
     for (const [k, v] of Object.entries(data.extensions)) {
@@ -105,8 +176,8 @@ export function importTavernCard(input: object | string): ImportResult {
     // prompt at depth N. We preserve it for round-trip per the spec, but the
     // v0.2 runtime won't honor it — surface that loudly so an operator who
     // imports a card whose entire character lives in depth_prompt notices.
-    const dp = (data.extensions as Record<string, unknown>).depth_prompt;
-    if (dp && typeof dp === "object" && (dp as Record<string, unknown>).prompt) {
+    const dp = (data.extensions as Record<string, unknown>)["depth_prompt"];
+    if (dp && typeof dp === "object" && (dp as Record<string, unknown>)["prompt"]) {
       warnings.push(
         "review needed: extensions.depth_prompt was preserved as chub.ai/depth_prompt but is not honored by the v0.2 runtime — fold its content into identity.description",
       );
@@ -127,6 +198,8 @@ export function importTavernCard(input: object | string): ImportResult {
     "review needed: idiolect, voice, scenes are empty — fill them in or this persona will sound generic",
   );
 
+  const resolvedAgeGate: AgeGate = ageGateFromTag ?? "13+";
+
   const persona: VoicePersona = {
     spec_version: "0.2",
     id: `imported/${slug}`,
@@ -136,8 +209,9 @@ export function importTavernCard(input: object | string): ImportResult {
     identity: {
       tagline,
       ...(finalDescription ? { description: finalDescription } : {}),
+      ...(archetypeFromTag ? { archetype: archetypeFromTag } : {}),
     },
-    safety: { age_gate: "13+" },
+    safety: { age_gate: resolvedAgeGate },
     author,
     // SPDX "NOASSERTION" — the standard way to say "we don't know" rather
     // than coining a custom string that future SPDX-aware tooling will choke on.
@@ -314,3 +388,27 @@ function parseMesExamples(raw: string | undefined, warnings: string[]): SceneExa
   }
   return out;
 }
+
+// ---------- CCv3 importer stub ----------
+//
+// TODO(v2): implement importTavernCardV3(input: object | string): ImportResult
+//
+// CCv3 (chara_card_v3) extends CCv2 with:
+//   • data.assets[] — character image/icon/sound array
+//   • data.group_only_greetings — group-chat-specific greetings
+//   • data.nickname — display name separate from character name
+//   • data.creation_date, data.modification_date — ISO timestamps
+//   • data.source[] — provenance URIs
+//   • data.character_book — embedded lorebook (same shape as CCv2)
+//   • data.tags, data.creator, etc. — same as CCv2
+//
+// Structural mapping plan (deterministic, no LLM):
+//   data.nickname          → identity.tagline prefix hint (or just identity.archetype)
+//   data.assets[type=icon] → extensions["chara_card_v3/icon_url"]
+//   data.source[]          → extensions["chara_card_v3/source"] (provenance array)
+//   data.creation_date     → changelog[0].date (if no character_version)
+//   group_only_greetings   → dropped (warn: "dropped: group_only_greetings — no group-chat concept in v0.2")
+//   everything else        → same as CCv2 path above
+//
+// Blocker: no public CCv3 test fixtures in the repo yet — add fixtures to
+// test/fixtures/ccv3/ before implementing so the test gate can cover it.

@@ -63,7 +63,10 @@ test("importTavernCard — full card maps + surfaces drops as warnings", () => {
   assert.equal(persona.author.handle, "noirfan");
   assert.equal(persona.greetings?.length, 3);
   assert.equal(persona.examples?.length, 1);
-  assert.deepEqual(persona.extensions?.["chub.ai/tags"], ["noir", "detective", "adult"]);
+  // "adult" is now structurally mapped to safety.age_gate "18+" and removed from tags.
+  // "noir" and "detective" are not in the archetype whitelist — they stay as unmapped tags.
+  assert.equal(persona.safety.age_gate, "18+", "adult tag maps to age_gate 18+");
+  assert.deepEqual(persona.extensions?.["chub.ai/tags"], ["noir", "detective"], "only unmapped tags in extension");
   assert.equal(persona.extensions?.["chub.ai/creator_notes"], "Originally written for a noir setting.");
   assert.deepEqual(persona.extensions?.["chub.ai/depth_prompt"], { prompt: "be terse", depth: 4 });
 
